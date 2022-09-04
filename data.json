@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "firstName": "Oscar",
+        "lastName": "Pfuturi Huisa",
+        "phone": 999999999,
+        "email": "oscar96@gmail.com",
+        "address": "Av. RC 13 C.",
+        "created_at": "04-04-2022 08:45:13"
+    },
+    {
+        "id": 2,
+        "firstName": "Kevin",
+        "lastName": "Quispe Mamani",
+        "phone": 999999996,
+        "email": "kevin12@gmail.com",
+        "address": "Av. X 1",
+        "created_at": "06-05-2022 12:37:11"
+    },
+    {
+        "id": 3,
+        "firstName": "Alexander",
+        "lastName": "Ticona Huaman",
+        "phone": 999999993,
+        "email": "alex12@gmail.com",
+        "address": "Av. Y 2",
+        "created_at": "06-07-2022 16:41:53"
+    }
+]
