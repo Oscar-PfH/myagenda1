@@ -1,4 +1,5 @@
 var data = []
+var newId = 0
 
 window.editUser = async function () {
     const name = document.getElementById('name').value;
@@ -24,13 +25,12 @@ window.addContact = async function () {
     const email = document.getElementById('email').value;
     const address = document.getElementById('address').value;
 
-    let lastId = data.slice(-1);
     var date = new Date();
 	var current_date = date.getFullYear()+"-"+(date.getMonth()+1)+"-"+ date.getDate();
 	var current_time = date.getHours()+":"+date.getMinutes()+":"+ date.getSeconds();
-	var date_time = current_date+" "+current_time;	
+	var date_time = current_date+" "+current_time;
     data.push({
-        id: lastId[0].id + 1,
+        id: newId,
         firstName: name,
         lastName: lname,
         phone: cellphone,
@@ -38,7 +38,8 @@ window.addContact = async function () {
         address: address,
         created_at: date_time
     })
-    displayContacts();
+    newId++;
+    displayContacts(data.slice(1));
     document.getElementById('modal-form').style.display = 'none';
     emergentMessage('Contacto guardado con éxito');
 }
@@ -50,8 +51,9 @@ window.editContact = async function (id) {
     const email = document.getElementById('email').value;
     const address = document.getElementById('address').value;
 
-    index = getIndex(id);
+    let index = getIndex(id);
     data[index] = {
+        ...data[index],
         firstName: name,
         lastName: lname,
         phone: cellphone,
@@ -65,16 +67,10 @@ window.editContact = async function (id) {
 }
 
 window.removeContact = async function (id) {
-    index = getIndex(id);
+    let index = getIndex(id);
     data.splice(index, 1)
     displayContacts();
     emergentMessage('Contacto eliminado');
-}
-
-async function searchContacts() {
-    const search = document.getElementById('search-input').value;
-    const contacts = await service.searchContacts(search);
-    displayContacts(contacts);
 }
 
 window.displayModal = async function (action = null, id = null) {
@@ -115,18 +111,28 @@ window.displayModal = async function (action = null, id = null) {
     }
 }
 
-async function displayUserData() {
+function searchContacts() {
+    const search = document.getElementById('search-input').value;
+    var results = []
+    data.map(contact => {
+        let index1 = contact.firstName.toLowerCase().indexOf(search.toLowerCase());
+        let index2 = contact.lastName.toLowerCase().indexOf(search.toLowerCase());
+        if (index1 > -1 || index2 > -1) results.push(contact);
+    });
+    displayContacts(results);
+}
+
+function displayUserData() {
     var user = data[0];
     document.getElementById('user-name').innerText = user.firstName + ' ' + user.lastName;
     document.getElementById('user-cp').innerText = user.phone;
     document.getElementById('user-mail').innerText = user.email;
 }
 
-async function displayContacts() {
+function displayContacts(contacts) {
     var contactsList = document.getElementById('contacts-list');
     contactsList.innerHTML = '';
-    contacts = data.slice(1);
-    contacts.forEach(contact => {
+    Array.from(contacts).forEach(contact => {
         var row = document.createElement('tr');
         row.setAttribute('id', "contact-" + contact.id);
         row.innerHTML = `
@@ -148,8 +154,9 @@ async function displayContacts() {
 
 async function displayAll() {
     data = await fetch("../data.json").then(res => { return res.json() });
+    newId = data.length + 1;
     displayUserData();
-    displayContacts();
+    displayContacts(data.slice(1));
 }
 
 function selectAllToggle(source) {
@@ -189,7 +196,7 @@ window.onload = async function (e) {
         searchContacts();
     })
     document.getElementById('contacts').addEventListener('click', function () {
-        displayAll();
+        displayContacts(data.slice(1));
     })
     document.getElementById('select-all').addEventListener('click', function () {
         selectAllToggle(this);
